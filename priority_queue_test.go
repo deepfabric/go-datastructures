@@ -12,7 +12,7 @@ import (
 
 type mockItem int
 
-func (mi mockItem) Compare(other Item) int {
+func (mi mockItem) Compare(other Comparable) int {
 	omi := other.(mockItem)
 	if mi > omi {
 		return 1

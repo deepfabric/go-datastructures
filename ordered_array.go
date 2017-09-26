@@ -20,7 +20,7 @@ const MaxInt = int(MaxUint >> 1)
 const MinInt = -MaxInt - 1
 
 // orderedItems is a max-heap
-type orderedItems []Item
+type orderedItems []Comparable
 
 // Len is part of sort.Interface.
 func (s orderedItems) Len() int {
@@ -41,7 +41,7 @@ func (s orderedItems) Less(i, j int) bool {
 func (s *orderedItems) Push(x interface{}) {
 	// Push and Pop use pointer receivers because they modify the slice's length,
 	// not just its contents.
-	*s = append(*s, x.(Item))
+	*s = append(*s, x.(Comparable))
 }
 
 // Pop is part of heap.Interface.
@@ -61,7 +61,7 @@ type OrderedArray struct {
 }
 
 // Put adds items to the queue.
-func (oa *OrderedArray) Put(items ...Item) {
+func (oa *OrderedArray) Put(items ...Comparable) {
 	for _, item := range items {
 		if len(oa.items) >= oa.capacity {
 			if oa.items[0].Compare(item) > 0 {
@@ -77,7 +77,7 @@ func (oa *OrderedArray) Put(items ...Item) {
 
 // Finalize retrieves all items from and clear the array.
 // items is sorted in ascending order.
-func (oa *OrderedArray) Finalize() (items []Item) {
+func (oa *OrderedArray) Finalize() (items []Comparable) {
 	sort.Sort(sort.Reverse(oa.items))
 	items = oa.items
 	oa.items = make(orderedItems, 0, oa.capacity)

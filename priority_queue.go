@@ -15,18 +15,18 @@ import (
 	"sort"
 )
 
-// Item is an item that can be added to the priority queue.
-type Item interface {
+// Comparable is an item that can be added to the priority queue.
+type Comparable interface {
 	// Compare returns a int that can be used to determine
 	// ordering in the priority queue.  Assuming the queue
 	// is in ascending order, this should return > logic.
 	// Return 1 to indicate this object is greater than the
 	// the other logic, 0 to indicate equality, and -1 to indicate
 	// less than other.
-	Compare(other Item) int
+	Compare(other Comparable) int
 }
 
-type priorityItems []Item
+type priorityItems []Comparable
 
 // Len is part of sort.Interface.
 func (s priorityItems) Len() int {
@@ -47,7 +47,7 @@ func (s priorityItems) Less(i, j int) bool {
 func (s *priorityItems) Push(x interface{}) {
 	// Push and Pop use pointer receivers because they modify the slice's length,
 	// not just its contents.
-	*s = append(*s, x.(Item))
+	*s = append(*s, x.(Comparable))
 }
 
 // Pop is part of heap.Interface.
@@ -68,7 +68,7 @@ type PriorityQueue struct {
 }
 
 // Put adds items to the queue.
-func (pq *PriorityQueue) Put(items ...Item) {
+func (pq *PriorityQueue) Put(items ...Comparable) {
 	if len(items) == 0 {
 		return
 	}
@@ -79,20 +79,20 @@ func (pq *PriorityQueue) Put(items ...Item) {
 }
 
 // Get retrieves an item from the queue if non-empty, othewise returns nil
-func (pq *PriorityQueue) Get() (item Item) {
+func (pq *PriorityQueue) Get() (item Comparable) {
 	if len(pq.items) == 0 {
 		return
 	}
-	item = heap.Pop(&pq.items).(Item)
+	item = heap.Pop(&pq.items).(Comparable)
 	return
 }
 
 // BulkGet retrieves items from the queue.
 // len(items) will be max(0, min(number, len(pq.items)))
 // items is sorted in ascending order.
-func (pq *PriorityQueue) BulkGet(number int) (items []Item) {
+func (pq *PriorityQueue) BulkGet(number int) (items []Comparable) {
 	if number < 1 {
-		items = make([]Item, 0)
+		items = make([]Comparable, 0)
 		return
 	}
 	if number >= len(pq.items) {
@@ -101,15 +101,15 @@ func (pq *PriorityQueue) BulkGet(number int) (items []Item) {
 		pq.items = make(priorityItems, 0, pq.capHint)
 		return
 	}
-	items = make([]Item, number, number)
+	items = make([]Comparable, number, number)
 	for i := 0; i < number; i++ {
-		items[i] = heap.Pop(&pq.items).(Item)
+		items[i] = heap.Pop(&pq.items).(Comparable)
 	}
 	return
 }
 
 // Peek will look at the next item without removing it from the queue.
-func (pq *PriorityQueue) Peek() Item {
+func (pq *PriorityQueue) Peek() Comparable {
 	if len(pq.items) > 0 {
 		return pq.items[0]
 	}
