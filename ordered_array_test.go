@@ -35,6 +35,33 @@ func TestOrderedArrayPut(t *testing.T) {
 	assert.Equal(t, mockItem(1), q.items[1])
 	assert.Equal(t, mockItem(2), q.items[0])
 }
+
+func TestOrderedArrayMerge(t *testing.T) {
+	q1, _ := NewOrderedArray(1000)
+	q2, _ := NewOrderedArray(1000)
+	for i := 0; i < 250; i++ {
+		q1.Put(mockItem(i))
+	}
+	for i := 750; i < 10000; i++ {
+		q1.Put(mockItem(i))
+	}
+	for i := 250; i < 750; i++ {
+		q2.Put(mockItem(i))
+	}
+	for i := 1000; i < 2000; i++ {
+		q2.Put(mockItem(i))
+	}
+	q1.Merge(q2)
+	assert.Equal(t, 1000, q1.Len())
+
+	result := q1.Finalize()
+	assert.Equal(t, 1000, len(result))
+
+	for i := 0; i < len(result); i++ {
+		assert.Equal(t, mockItem(i), result[i])
+	}
+}
+
 func TestOrderedArrayFinalize(t *testing.T) {
 	q, _ := NewOrderedArray(1000)
 	for i := 0; i < 500; i++ {

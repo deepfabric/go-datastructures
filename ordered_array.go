@@ -89,6 +89,11 @@ func (oa *OrderedArray) Len() int {
 	return len(oa.items)
 }
 
+// Merge merges other (keep unchanged) into oa
+func (oa *OrderedArray) Merge(other *OrderedArray) {
+	oa.Put(other.items...)
+}
+
 // NewOrderedArray is the constructor for an ordered array.
 // capacity is size limit of queue. capacity shall > 0.
 func NewOrderedArray(capacity int) (oa *OrderedArray, err error) {
