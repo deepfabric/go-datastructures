@@ -7,20 +7,19 @@ import (
 )
 
 func TestOrderedArrayNew(t *testing.T) {
-	var err error
-	_, err = NewOrderedArray(-1)
-	assert.NotEqual(t, nil, err)
+	q1 := NewOrderedArray(-1)
+	q2 := NewOrderedArray(0)
 
-	_, err = NewOrderedArray(0)
-	assert.NotEqual(t, nil, err)
-
-	_, err = NewOrderedArray(1)
-	assert.Equal(t, nil, err)
+	for i := 0; i < 10000; i++ {
+		q1.Put(mockItem(i))
+		q2.Put(mockItem(i))
+	}
+	assert.Equal(t, 10000, q1.Len())
+	assert.Equal(t, 10000, q2.Len())
 }
 
 func TestOrderedArrayPut(t *testing.T) {
-	q, err := NewOrderedArray(10)
-	assert.Equal(t, nil, err)
+	q := NewOrderedArray(10)
 
 	q.Put(mockItem(2))
 
@@ -37,8 +36,8 @@ func TestOrderedArrayPut(t *testing.T) {
 }
 
 func TestOrderedArrayMerge(t *testing.T) {
-	q1, _ := NewOrderedArray(1000)
-	q2, _ := NewOrderedArray(1000)
+	q1 := NewOrderedArray(1000)
+	q2 := NewOrderedArray(1000)
 	for i := 0; i < 250; i++ {
 		q1.Put(mockItem(i))
 	}
@@ -63,7 +62,7 @@ func TestOrderedArrayMerge(t *testing.T) {
 }
 
 func TestOrderedArrayFinalize(t *testing.T) {
-	q, _ := NewOrderedArray(1000)
+	q := NewOrderedArray(1000)
 	for i := 0; i < 500; i++ {
 		q.Put(mockItem(i))
 	}
@@ -86,7 +85,7 @@ func TestOrderedArrayFinalize(t *testing.T) {
 
 func BenchmarkOrderedPutFinalize(b *testing.B) {
 	capHint := 1000
-	q, _ := NewOrderedArray(capHint)
+	q := NewOrderedArray(capHint)
 	for i := 0; i < b.N; i++ {
 		q.Put(mockItem(i))
 	}

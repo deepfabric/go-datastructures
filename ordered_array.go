@@ -9,8 +9,6 @@ package datastructures
 import (
 	"container/heap"
 	"sort"
-
-	"github.com/pkg/errors"
 )
 
 // https://stackoverflow.com/questions/6878590/the-maximum-value-for-an-int-type-in-go
@@ -62,14 +60,16 @@ type OrderedArray struct {
 
 // Put adds items to the queue.
 func (oa *OrderedArray) Put(items ...Comparable) {
+	size := len(oa.items)
 	for _, item := range items {
-		if len(oa.items) >= oa.capacity {
+		if oa.capacity > 0 && size >= oa.capacity {
 			if oa.items[0].Compare(item) > 0 {
 				oa.items[0] = item
 				heap.Fix(&oa.items, 0)
 			}
 		} else {
 			heap.Push(&oa.items, item)
+			size++
 		}
 	}
 	return
@@ -80,7 +80,7 @@ func (oa *OrderedArray) Put(items ...Comparable) {
 func (oa *OrderedArray) Finalize() (items []Comparable) {
 	sort.Sort(sort.Reverse(oa.items))
 	items = oa.items
-	oa.items = make(orderedItems, 0, oa.capacity)
+	oa.items = make(orderedItems, 0)
 	return
 }
 
@@ -95,14 +95,10 @@ func (oa *OrderedArray) Merge(other *OrderedArray) {
 }
 
 // NewOrderedArray is the constructor for an ordered array.
-// capacity is size limit of queue. capacity shall > 0.
-func NewOrderedArray(capacity int) (oa *OrderedArray, err error) {
-	if capacity <= 0 {
-		err = errors.Errorf("invalid parameter capacity, have %v, want >0", capacity)
-		return
-	}
+// capacity is size limit of queue. <=0 means no limit.
+func NewOrderedArray(capacity int) (oa *OrderedArray) {
 	oa = &OrderedArray{
-		items:    make(orderedItems, 0, capacity),
+		items:    make(orderedItems, 0),
 		capacity: capacity,
 	}
 	return
